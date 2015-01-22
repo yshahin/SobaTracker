@@ -22,7 +22,7 @@ app.get('/', function(request, response) {
   redis.keys("*_*", function (err, replies) {
     response.send(replies.map(function(i) {
       var parts = i.split("_")
-      return { date: new Date((+parts[0])*1000), temp: +parts[1] }
+      return { date: new Date(+parts[0]), temp: +parts[1] }
     }));
   });
 });
