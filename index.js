@@ -19,7 +19,9 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-  response.send(redis.keys("*_*"));
+  response.send(redis.keys("*_*"), function (err, replies) {
+    response.send(replies);
+  });
 });
 
 app.get('/add', function(request, response) {
@@ -27,8 +29,10 @@ app.get('/add', function(request, response) {
   var temp = +request.query.temp / 1000.0;
   var key = timestamp + "_" + temp
 
-  redis.set(key, key);
-  response.send(200);
+  if(redis.set(key, key))
+    response.send(200);
+  else
+    response.send(500);
 });
 
 app.listen(app.get('port'), function() {
