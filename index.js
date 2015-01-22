@@ -1,16 +1,16 @@
-var redis = null;
-if (process.env.REDISCLOUD_URL) {
-  var rtg   = require("url").parse(process.env.REDISCLOUD_URL);
-  redis = require("redis").createClient(rtg.port, rtg.hostname);
+// var redis = null;
+// if (process.env.REDISCLOUD_URL) {
+//   var rtg   = require("url").parse(process.env.REDISCLOUD_URL);
+//   redis = require("redis").createClient(rtg.port, rtg.hostname);
 
-  redis.auth(rtg.auth.split(":")[1]);
-} else {
-  redis = require("redis").createClient();
-}
+//   redis.auth(rtg.auth.split(":")[1]);
+// } else {
+//   redis = require("redis").createClient();
+// }
 
-redis.on("error", function (err) {
-  console.log("Error " + err);
-});
+// redis.on("error", function (err) {
+//   console.log("Error " + err);
+// });
 
 var express = require('express');
 var app = express();
@@ -23,12 +23,10 @@ app.get('/', function(request, response) {
 });
 
 app.get('/add', function(request, response) {
-  var timestamp = req.query.timestamp;
-  var date = new Date(timestamp*1000);
-  var temp = +req.query.temp;
-  temp = temp / 1000.0;
+  var timestamp = request.query.timestamp;
+  var temp = +request.query.temp / 1000.0;
 
-  response.send(date + ': ' + temp);
+  response.send(timestamp + ': ' + temp);
   //redis.set("", "");
 });
 
