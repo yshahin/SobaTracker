@@ -20,7 +20,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
   redis.keys("*_*", function (err, replies) {
-    response.send(replies);
+    response.send(replies.map(function(i) {
+      var parts = i.split("_")
+      return { date: new Date((+parts[0])*1000), temp: +parts[1] }
+    }));
   });
 });
 
@@ -29,10 +32,8 @@ app.get('/add', function(request, response) {
   var temp = +request.query.temp / 1000.0;
   var key = timestamp + "_" + temp
 
-  if(redis.set(key, key))
-    response.send(200);
-  else
-    response.send(500);
+  if(redis.set(key, key)) response.send(200);
+  else response.send(500);
 });
 
 app.listen(app.get('port'), function() {
