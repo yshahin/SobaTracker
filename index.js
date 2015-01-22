@@ -1,13 +1,11 @@
-var redis = require("redis").createClient();
-var client = null;
-
+var redis = null;
 if (process.env.REDISTOGO_URL) {
   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-  client = redis.createClient(rtg.port, rtg.hostname);
+  redis = require("redis").createClient(rtg.port, rtg.hostname);
 
   redis.auth(rtg.auth.split(":")[1]);
 } else {
-  client = redis.createClient();
+  redis = require("redis").createClient();
 }
 
 redis.on("error", function (err) {
@@ -31,7 +29,7 @@ app.get('/add', function(request, response) {
   temp = temp / 1000.0;
 
   response.send(date + ': ' + temp);
-  //client.set("", "");
+  //redis.set("", "");
 });
 
 app.listen(app.get('port'), function() {
