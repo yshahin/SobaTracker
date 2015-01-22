@@ -19,7 +19,7 @@ app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(request, response) {
-  response.send(redis.keys("*_*"), function (err, replies) {
+  redis.keys("*_*", function (err, replies) {
     response.send(replies);
   });
 });
