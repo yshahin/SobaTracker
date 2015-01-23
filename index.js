@@ -12,32 +12,41 @@ redis.on("error", function (err) {
   console.log("Error " + err);
 });
 
-var express = require('express');
+var express = require('express'),
+    exphbs  = require('express-handlebars');
+
 var app = express();
+
+app.use(express.static(__dirname + '/public'));
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(request, response) {
-  redis.keys("*_*", function (err, replies) {
-    response.send(replies.map(function(i) {
-      var parts = i.split("_")
-      return {
-        timestamp: +parts[0],
-        date: new Date(+parts[0]),
-        temp: +parts[1]
-      }
-    }));
+app.get('/', function(req, res) {
+  res.render('home');
+});
+
+app.get('/data', function(req, res) {
+  redis.hgetall("soba", function(err, obj) {
+    data = [['x'],['temp']];
+    for(var time in obj) {
+      data[0].push(time);
+      data[1].push(obj[time]);
+    }
+    res.send(data);
   });
 });
 
-app.get('/add', function(request, response) {
-  var timestamp = request.query.timestamp;
-  var temp = +request.query.temp / 1000.0;
-  var key = timestamp + "_" + temp
+app.get('/add', function(req, res) {
+  var timestamp = req.query.timestamp;
+  var temp = +req.query.temp / 1000.0;
 
-  if(redis.set(key, key)) response.send(200);
-  else response.send(500);
+  if(redis.hset("soba", timestamp, temp)) res.send(200);
+  else res.send(500);
 });
 
 app.listen(app.get('port'), function() {

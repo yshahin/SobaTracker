@@ -9,7 +9,8 @@
   "dependencies": {
     "express": "~4.9.x",
     "hiredis": "*",
-    "redis": "*"
+    "redis": "*",
+    "express-handlebars": "*"
   },
   "engines": {
     "node": "0.10.x"
