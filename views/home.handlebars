@@ -1,0 +1,31 @@
+<h1>Example App: Home</h1>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    _chart = c3.generate({
+      bindto: '#chart',
+      data: {
+        x: 'x',
+        columns: [
+          ['x'],
+          ['temp']
+        ]
+      },
+      axis: {
+        x: {
+          type: 'timeseries',
+          tick: { format: '%Y-%m-%d %I:%M' }
+        }
+      }
+    });
+
+    $.ajax({
+      url: "/data",
+      dataType: "json",
+    }).done(function(data) {
+      _chart.load({ columns: data });
+    });
+  });
+</script>
+
+<div id="chart"></div>
