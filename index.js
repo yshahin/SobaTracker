@@ -42,7 +42,7 @@ app.get('/data', function(req, res) {
 });
 
 app.get('/add', function(req, res) {
-  var timestamp = req.query.timestamp;
+  var timestamp = +req.query.timestamp * 1000;
   var temp = +req.query.temp / 1000.0;
 
   if(redis.hset("soba", timestamp, temp)) res.send(200);
