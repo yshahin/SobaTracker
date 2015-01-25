@@ -49,6 +49,11 @@ app.get('/add', function(req, res) {
   else res.send(500);
 });
 
+app.get('/del', function(req, res) {
+  if(redis.hdel("soba", req.query.key)) res.send(200);
+  else res.send(500);
+});
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
